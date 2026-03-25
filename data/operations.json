@@ -1,0 +1,61 @@
+[
+  {
+    "id": 1,
+    "state": "EXECUTED",
+    "date": "2023-10-01T10:00:00",
+    "operationAmount": {
+      "amount": "1000.00",
+      "currency": {
+        "name": "руб.",
+        "code": "RUB"
+      }
+    },
+    "description": "Перевод организации",
+    "from": "Счет 12345678901234567890",
+    "to": "Счет 09876543210987654321"
+  },
+  {
+    "id": 2,
+    "state": "EXECUTED",
+    "date": "2023-10-02T11:00:00",
+    "operationAmount": {
+      "amount": "500.00",
+      "currency": {
+        "name": "USD",
+        "code": "USD"
+      }
+    },
+    "description": "Перевод с карты на карту",
+    "from": "Visa 1234567890123456",
+    "to": "MasterCard 6543210987654321"
+  },
+  {
+    "id": 3,
+    "state": "CANCELED",
+    "date": "2023-10-03T12:00:00",
+    "operationAmount": {
+      "amount": "2000.00",
+      "currency": {
+        "name": "руб.",
+        "code": "RUB"
+      }
+    },
+    "description": "Открытие вклада",
+    "to": "Счет 11111111111111111111"
+  },
+  {
+    "id": 4,
+    "state": "PENDING",
+    "date": "2023-10-04T13:00:00",
+    "operationAmount": {
+      "amount": "300.00",
+      "currency": {
+        "name": "EUR",
+        "code": "EUR"
+      }
+    },
+    "description": "Перевод организации",
+    "from": "Счет 22222222222222222222",
+    "to": "Счет 33333333333333333333"
+  }
+]
