@@ -183,18 +183,19 @@ def main():
 
     for t in filtered:
         date = format_date(t.get("date", ""))
-        description = t.get("description", "")
+        description = t.get("description", "Описание отсутствует")
         op_amount = t.get("operationAmount", {})
-        amount = op_amount.get("amount", "")
-        currency = op_amount.get("currency", {}).get("code", "")
+        amount = op_amount.get("amount", "0")
+        currency_data = op_amount.get("currency", {})
+        currency = currency_data.get("code", "")
         from_info = mask_card_number(t.get("from", ""))
         to_info = mask_card_number(t.get("to", ""))
 
         print(f"\n{date} {description}")
-        if from_info != "Нет данных":
+        if from_info and from_info != "Нет данных":
             print(f"{from_info} -> {to_info}")
         else:
-            print(f"Кому: {to_info}")
+            print(to_info)
         print(f"Сумма: {amount} {currency}")
 
 
