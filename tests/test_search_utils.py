@@ -4,7 +4,6 @@
 
 from src.search_utils import search_transactions
 
-
 def test_search_transactions_found():
     """Тест поиска существующей строки."""
     data = [

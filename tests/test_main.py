@@ -7,7 +7,6 @@ from unittest.mock import mock_open, patch
 
 from src.main import filter_by_status, load_transactions_from_json
 
-
 def test_load_transactions_from_json_success():
     """Тест успешной загрузки JSON."""
     mock_data = [{"id": 1}, {"id": 2}]

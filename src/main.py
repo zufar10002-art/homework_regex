@@ -5,7 +5,7 @@
 import json
 from typing import Any, Dict, List
 
-from src.search_utils import search_transactions
+from search_utils import search_transactions
 
 
 def load_transactions_from_json(file_path: str) -> List[Dict[str, Any]]:

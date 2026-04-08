@@ -4,7 +4,6 @@
 
 from src.category_utils import count_operations_by_category
 
-
 def test_count_operations_by_category():
     """Тест подсчета операций по категориям."""
     data = [
