@@ -3,8 +3,10 @@
 """
 
 import json
+import os
 from typing import Any, Dict, List
 
+from file_processing import read_csv_transactions, read_excel_transactions
 from search_utils import search_transactions
 
 
@@ -17,26 +19,17 @@ def load_transactions_from_json(file_path: str) -> List[Dict[str, Any]]:
         return []
 
 
-def load_transactions_from_csv(file_path: str) -> List[Dict[str, Any]]:
-    """Загружает транзакции из CSV-файла (заглушка)."""
-    print("Программа: Функция загрузки из CSV пока не реализована.")
-    return []
-
-
-def load_transactions_from_xlsx(file_path: str) -> List[Dict[str, Any]]:
-    """Загружает транзакции из XLSX-файла (заглушка)."""
-    print("Программа: Функция загрузки из XLSX пока не реализована.")
-    return []
-
-
 def filter_by_status(
     transactions: List[Dict[str, Any]], status: str
 ) -> List[Dict[str, Any]]:
     """Фильтрует транзакции по статусу."""
-    return [
-        t for t in transactions
-        if t.get("state", "").upper() == status.upper()
-    ]
+    result = []
+    for t in transactions:
+        state = t.get("state")
+        if state is not None and isinstance(state, str):
+            if state.upper() == status.upper():
+                result.append(t)
+    return result
 
 
 def sort_by_date(
@@ -63,9 +56,13 @@ def filter_rub_only(
     return result
 
 
-def format_date(date_str: str) -> str:
+def format_date(date_str) -> str:
     """Форматирует дату из ISO в DD.MM.YYYY."""
-    if not date_str:
+    if date_str is None:
+        return "Дата неизвестна"
+    if not isinstance(date_str, str):
+        date_str = str(date_str)
+    if not date_str or date_str == "nan":
         return "Дата неизвестна"
     try:
         parts = date_str.split("T")[0].split("-")
@@ -74,9 +71,13 @@ def format_date(date_str: str) -> str:
         return "Дата неизвестна"
 
 
-def mask_card_number(card_str: str) -> str:
+def mask_card_number(card_str) -> str:
     """Маскирует номер карты или счета."""
-    if not card_str:
+    if card_str is None:
+        return "Нет данных"
+    if not isinstance(card_str, str):
+        card_str = str(card_str)
+    if not card_str or card_str == "nan":
         return "Нет данных"
     if "Счет" in card_str:
         numbers = ''.join(filter(str.isdigit, card_str))
@@ -97,6 +98,10 @@ def main():
     print("Программа: Привет! Добро пожаловать в программу работы "
           "с банковскими транзакциями.")
 
+    # Определяем корневую директорию проекта
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    data_dir = os.path.join(root_dir, "data")
+
     print("\nВыберите необходимый пункт меню:")
     print("1. Получить информацию о транзакциях из JSON-файла")
     print("2. Получить информацию о транзакциях из CSV-файла")
@@ -106,15 +111,16 @@ def main():
 
     if choice == "1":
         print("Программа: Для обработки выбран JSON-файл.")
-        transactions = load_transactions_from_json("data/operations.json")
+        file_path = os.path.join(data_dir, "operations.json")
+        transactions = load_transactions_from_json(file_path)
     elif choice == "2":
         print("Программа: Для обработки выбран CSV-файл.")
-        transactions = load_transactions_from_csv("data/transactions.csv")
+        file_path = os.path.join(data_dir, "transactions.csv")
+        transactions = read_csv_transactions(file_path)
     elif choice == "3":
         print("Программа: Для обработки выбран XLSX-файл.")
-        transactions = load_transactions_from_xlsx(
-            "data/transactions_excel.xlsx"
-        )
+        file_path = os.path.join(data_dir, "transactions_excel.xlsx")
+        transactions = read_excel_transactions(file_path)
     else:
         print("Программа: Неверный выбор. Завершение работы.")
         return
@@ -185,9 +191,14 @@ def main():
         date = format_date(t.get("date", ""))
         description = t.get("description", "Описание отсутствует")
         op_amount = t.get("operationAmount", {})
-        amount = op_amount.get("amount", "0")
-        currency_data = op_amount.get("currency", {})
-        currency = currency_data.get("code", "")
+        if isinstance(op_amount, dict):
+            amount = op_amount.get("amount", "0")
+            currency_data = op_amount.get("currency", {})
+            currency = currency_data.get("code", "") if isinstance(currency_data, dict) else ""
+        else:
+            amount = str(op_amount) if op_amount else "0"
+            currency = ""
+
         from_info = mask_card_number(t.get("from", ""))
         to_info = mask_card_number(t.get("to", ""))
 
