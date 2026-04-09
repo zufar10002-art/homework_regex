@@ -181,8 +181,8 @@ def main():
         search_word = input("Программа: Введите слово для поиска: ").strip()
         filtered = search_transactions(filtered, search_word)
         found_count = len(filtered)
-        print("Программа: Найдено", found_count,
-              "транзакций по слову", search_word)
+        msg = f"Программа: Найдено {found_count} транзакций по слову"
+        print(f"{msg} \"{search_word}\".")
 
     print("\nПрограмма: Распечатываю итоговый список транзакций...\n")
     print(f"Всего банковских операций в выборке: {len(filtered)}")
@@ -194,7 +194,10 @@ def main():
         if isinstance(op_amount, dict):
             amount = op_amount.get("amount", "0")
             currency_data = op_amount.get("currency", {})
-            currency = currency_data.get("code", "") if isinstance(currency_data, dict) else ""
+            if isinstance(currency_data, dict):
+                currency = currency_data.get("code", "")
+            else:
+                currency = ""
         else:
             amount = str(op_amount) if op_amount else "0"
             currency = ""
