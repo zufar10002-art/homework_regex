@@ -1,42 +1,37 @@
-"""
-Module for reading financial transactions from CSV and Excel files.
-"""
-
-from typing import Any, Dict, List
-
 import pandas as pd
+from typing import List, Dict, Any
 
 
 def read_csv_transactions(file_path: str) -> List[Dict[str, Any]]:
-    """
-    Reads financial transactions from a CSV file.
-
-    Args:
-        file_path (str): Path to the CSV file.
-
-    Returns:
-        List[Dict[str, Any]]: List of dictionaries containing transaction data.
-                              Returns empty list on error.
-    """
+    """Считывает финансовые операции из CSV-файла."""
     try:
         df = pd.read_csv(file_path, sep=';', encoding='utf-8')
-        return df.to_dict(orient='records')
+        transactions = []
+        for _, row in df.iterrows():
+            trans = {
+                "id": row.get("id"),
+                "state": row.get("state"),
+                "date": row.get("date"),
+                "operationAmount": {
+                    "amount": str(row.get("amount", "0")),
+                    "currency": {
+                        "name": row.get("currency_name", ""),
+                        "code": row.get("currency_code", "")
+                    }
+                },
+                "description": row.get("description", ""),
+                "from": row.get("from", ""),
+                "to": row.get("to", "")
+            }
+            transactions.append(trans)
+        return transactions
     except Exception as e:
         print(f"Error reading CSV: {e}")
         return []
 
 
 def read_excel_transactions(file_path: str) -> List[Dict[str, Any]]:
-    """
-    Reads financial transactions from an Excel file.
-
-    Args:
-        file_path (str): Path to the Excel file.
-
-    Returns:
-        List[Dict[str, Any]]: List of dictionaries containing transaction data.
-                              Returns empty list on error.
-    """
+    """Считывает финансовые операции из Excel-файла."""
     try:
         df = pd.read_excel(file_path, engine='openpyxl')
         return df.to_dict(orient='records')
