@@ -56,13 +56,9 @@ def filter_rub_only(
     return result
 
 
-def format_date(date_str) -> str:
+def format_date(date_str: str) -> str:
     """Форматирует дату из ISO в DD.MM.YYYY."""
-    if date_str is None:
-        return "Дата неизвестна"
-    if not isinstance(date_str, str):
-        date_str = str(date_str)
-    if not date_str or date_str == "nan":
+    if not date_str:
         return "Дата неизвестна"
     try:
         parts = date_str.split("T")[0].split("-")
@@ -77,7 +73,7 @@ def mask_card_number(card_str) -> str:
         return "Нет данных"
     if not isinstance(card_str, str):
         card_str = str(card_str)
-    if not card_str or card_str == "nan":
+    if not card_str or card_str == "nan" or card_str == "None":
         return "Нет данных"
     if "Счет" in card_str:
         numbers = ''.join(filter(str.isdigit, card_str))
@@ -181,8 +177,8 @@ def main():
         search_word = input("Программа: Введите слово для поиска: ").strip()
         filtered = search_transactions(filtered, search_word)
         found_count = len(filtered)
-        msg = f"Программа: Найдено {found_count} транзакций по слову"
-        print(f"{msg} \"{search_word}\".")
+        print(f"Программа: Найдено {found_count} транзакций по слову "
+              f"\"{search_word}\".")
 
     print("\nПрограмма: Распечатываю итоговый список транзакций...\n")
     print(f"Всего банковских операций в выборке: {len(filtered)}")
@@ -191,17 +187,12 @@ def main():
         date = format_date(t.get("date", ""))
         description = t.get("description", "Описание отсутствует")
         op_amount = t.get("operationAmount", {})
-        if isinstance(op_amount, dict):
-            amount = op_amount.get("amount", "0")
-            currency_data = op_amount.get("currency", {})
-            if isinstance(currency_data, dict):
-                currency = currency_data.get("code", "")
-            else:
-                currency = ""
+        amount = op_amount.get("amount", "0")
+        currency_data = op_amount.get("currency", {})
+        if isinstance(currency_data, dict):
+            currency = currency_data.get("code", "")
         else:
-            amount = str(op_amount) if op_amount else "0"
             currency = ""
-
         from_info = mask_card_number(t.get("from", ""))
         to_info = mask_card_number(t.get("to", ""))
 
