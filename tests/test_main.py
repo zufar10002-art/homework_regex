@@ -5,7 +5,7 @@
 import json
 from unittest.mock import mock_open, patch
 
-from src.main import filter_by_status, load_transactions_from_json
+from main import filter_by_status, load_transactions_from_json
 
 
 def test_load_transactions_from_json_success():

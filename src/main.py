@@ -2,91 +2,21 @@
 Главный модуль программы для работы с банковскими транзакциями.
 """
 
-import json
 import os
-from typing import Any, Dict, List
 
-from file_processing import read_csv_transactions, read_excel_transactions
+from utils import load_transactions_from_json
+from file_processing import (
+    read_csv_transactions,
+    read_excel_transactions
+)
+from processing_utils import (
+    filter_by_status,
+    sort_by_date,
+    filter_rub_only,
+    format_date
+)
+from masks import mask_card_number
 from search_utils import search_transactions
-
-
-def load_transactions_from_json(file_path: str) -> List[Dict[str, Any]]:
-    """Загружает транзакции из JSON-файла."""
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return []
-
-
-def filter_by_status(
-    transactions: List[Dict[str, Any]], status: str
-) -> List[Dict[str, Any]]:
-    """Фильтрует транзакции по статусу."""
-    result = []
-    for t in transactions:
-        state = t.get("state")
-        if state is not None and isinstance(state, str):
-            if state.upper() == status.upper():
-                result.append(t)
-    return result
-
-
-def sort_by_date(
-    transactions: List[Dict[str, Any]], ascending: bool = True
-) -> List[Dict[str, Any]]:
-    """Сортирует транзакции по дате."""
-    return sorted(
-        transactions,
-        key=lambda x: x.get("date", ""),
-        reverse=not ascending
-    )
-
-
-def filter_rub_only(
-    transactions: List[Dict[str, Any]]
-) -> List[Dict[str, Any]]:
-    """Оставляет только рублевые транзакции."""
-    result = []
-    for t in transactions:
-        op_amount = t.get("operationAmount", {})
-        currency = op_amount.get("currency", {}).get("code", "")
-        if currency == "RUB":
-            result.append(t)
-    return result
-
-
-def format_date(date_str: str) -> str:
-    """Форматирует дату из ISO в DD.MM.YYYY."""
-    if not date_str:
-        return "Дата неизвестна"
-    try:
-        parts = date_str.split("T")[0].split("-")
-        return f"{parts[2]}.{parts[1]}.{parts[0]}"
-    except (IndexError, AttributeError):
-        return "Дата неизвестна"
-
-
-def mask_card_number(card_str) -> str:
-    """Маскирует номер карты или счета."""
-    if card_str is None:
-        return "Нет данных"
-    if not isinstance(card_str, str):
-        card_str = str(card_str)
-    if not card_str or card_str == "nan" or card_str == "None":
-        return "Нет данных"
-    if "Счет" in card_str:
-        numbers = ''.join(filter(str.isdigit, card_str))
-        if len(numbers) >= 4:
-            return f"Счет **{numbers[-4:]}"
-        return card_str
-    parts = card_str.split()
-    if len(parts) >= 2:
-        card_num = parts[-1]
-        if len(card_num) >= 16:
-            masked = f"{card_num[:4]} {card_num[4:6]}** **** {card_num[-4:]}"
-            return f"{parts[0]} {masked}"
-    return card_str
 
 
 def main():
