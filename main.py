@@ -5,8 +5,16 @@
 import os
 
 from src.utils import load_transactions_from_json
-from src.file_processing import read_csv_transactions, read_excel_transactions
-from src.processing_utils import filter_by_status, sort_by_date, filter_rub_only, format_date
+from src.file_processing import (
+    read_csv_transactions,
+    read_excel_transactions
+)
+from src.processing_utils import (
+    filter_by_status,
+    sort_by_date,
+    filter_rub_only,
+    format_date
+)
 from src.masks import mask_card_number
 from src.search_utils import search_transactions
 
