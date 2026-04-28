@@ -4,19 +4,11 @@
 
 import os
 
-from utils import load_transactions_from_json
-from file_processing import (
-    read_csv_transactions,
-    read_excel_transactions
-)
-from processing_utils import (
-    filter_by_status,
-    sort_by_date,
-    filter_rub_only,
-    format_date
-)
-from masks import mask_card_number
-from search_utils import search_transactions
+from src.utils import load_transactions_from_json
+from src.file_processing import read_csv_transactions, read_excel_transactions
+from src.processing_utils import filter_by_status, sort_by_date, filter_rub_only, format_date
+from src.masks import mask_card_number
+from src.search_utils import search_transactions
 
 
 def main():
@@ -24,8 +16,7 @@ def main():
     print("Программа: Привет! Добро пожаловать в программу работы "
           "с банковскими транзакциями.")
 
-    # Определяем корневую директорию проекта
-    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    root_dir = os.path.dirname(os.path.abspath(__file__))
     data_dir = os.path.join(root_dir, "data")
 
     print("\nВыберите необходимый пункт меню:")
