@@ -5,10 +5,10 @@
 import json
 from unittest.mock import mock_open, patch
 
-from src.main import filter_by_status, load_transactions_from_json
+from main import filter_by_status, load_transactions_from_json
+
 
 def test_load_transactions_from_json_success():
-    """Тест успешной загрузки JSON."""
     mock_data = [{"id": 1}, {"id": 2}]
     mock_file = mock_open(read_data=json.dumps(mock_data))
 
@@ -19,7 +19,6 @@ def test_load_transactions_from_json_success():
 
 
 def test_load_transactions_from_json_file_not_found():
-    """Тест при отсутствии файла."""
     with patch("builtins.open", side_effect=FileNotFoundError):
         result = load_transactions_from_json("fake_path.json")
 
@@ -27,7 +26,6 @@ def test_load_transactions_from_json_file_not_found():
 
 
 def test_load_transactions_from_json_invalid_json():
-    """Тест при невалидном JSON."""
     mock_file = mock_open(read_data="not json")
 
     with patch("builtins.open", mock_file):
@@ -37,7 +35,6 @@ def test_load_transactions_from_json_invalid_json():
 
 
 def test_filter_by_status():
-    """Тест фильтрации по статусу."""
     data = [
         {"state": "EXECUTED"},
         {"state": "CANCELED"},
@@ -50,7 +47,6 @@ def test_filter_by_status():
 
 
 def test_filter_by_status_case_insensitive():
-    """Тест регистронезависимой фильтрации."""
     data = [{"state": "executed"}, {"state": "CANCELED"}]
     result = filter_by_status(data, "EXECUTED")
     assert len(result) == 1
@@ -58,7 +54,6 @@ def test_filter_by_status_case_insensitive():
 
 
 def test_filter_by_status_no_match():
-    """Тест при отсутствии совпадений."""
     data = [{"state": "CANCELED"}, {"state": "PENDING"}]
     result = filter_by_status(data, "EXECUTED")
     assert result == []
